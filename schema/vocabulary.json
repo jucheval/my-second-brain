@@ -1,0 +1,101 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "vocabulary.json",
+  "title": "Second Brain vocabulary",
+  "description": "Reusable JSON Schema definitions for note, source, and workflow vocabulary.",
+  "$defs": {
+    "id": {
+      "type": "string",
+      "pattern": "^[a-z0-9](?:[a-z0-9-]*[a-z0-9])?$",
+      "description": "A globally unique lowercase ASCII kebab-case identifier."
+    },
+    "type": {
+      "type": "string",
+      "enum": [
+        "concept",
+        "theorem",
+        "conjecture",
+        "counterexample",
+        "method",
+        "algorithm",
+        "model",
+        "example",
+        "exercise",
+        "documentation",
+        "project",
+        "decision",
+        "plan",
+        "meeting",
+        "journal",
+        "index",
+        "context"
+      ],
+      "description": "The primary content type of a note."
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "draft",
+        "stable",
+        "deprecated"
+      ],
+      "description": "The lifecycle state of a note."
+    },
+    "tag": {
+      "type": "string",
+      "enum": [
+        "stochastic-process",
+        "coupling",
+        "julia",
+        "makie"
+      ],
+      "description": "An allowed flat, lowercase repository tag."
+    },
+    "humanAuthor": {
+      "type": "string",
+      "pattern": "^human:[A-Za-z0-9][A-Za-z0-9._-]*$",
+      "description": "A namespaced human identity."
+    },
+    "aiAuthor": {
+      "type": "string",
+      "pattern": "^ai:[A-Za-z0-9][A-Za-z0-9._-]*(?:@[A-Za-z0-9][A-Za-z0-9._-]*)?$",
+      "description": "A namespaced AI identity, optionally including a version."
+    },
+    "author": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/humanAuthor"
+        },
+        {
+          "$ref": "#/$defs/aiAuthor"
+        }
+      ],
+      "description": "A namespaced human or AI identity."
+    },
+    "dateTime": {
+      "type": "string",
+      "format": "date-time",
+      "pattern": "(?:Z|[+-][0-9]{2}:[0-9]{2})$",
+      "description": "An ISO 8601 date-time with an explicit UTC designator or numeric timezone offset."
+    },
+    "sourceUrl": {
+      "type": "string",
+      "format": "uri",
+      "pattern": "^https?://[^\\s]+$",
+      "description": "A public HTTP or HTTPS source URL."
+    },
+    "sourceLocation": {
+      "type": "string",
+      "pattern": "^assets/(?:papers|books|webpages|datasets|software|other)/[^\\\\:\\r\\n]+$",
+      "not": {
+        "pattern": "(^|/)\\.{1,2}(?:/|$)"
+      },
+      "description": "A repository-relative POSIX path inside a dedicated source-cache directory."
+    },
+    "sha256": {
+      "type": "string",
+      "pattern": "^[A-Fa-f0-9]{64}$",
+      "description": "An optional SHA-256 checksum represented as 64 hexadecimal characters."
+    }
+  }
+}

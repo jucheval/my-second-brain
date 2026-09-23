@@ -1,0 +1,32 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "source.schema.json",
+  "title": "Second Brain source",
+  "description": "A source referenced by a note.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "id",
+    "title",
+    "url"
+  ],
+  "properties": {
+    "id": {
+      "$ref": "vocabulary.json#/$defs/id"
+    },
+    "title": {
+      "type": "string",
+      "minLength": 1,
+      "description": "The display title of the source."
+    },
+    "url": {
+      "$ref": "vocabulary.json#/$defs/sourceUrl"
+    },
+    "location": {
+      "$ref": "vocabulary.json#/$defs/sourceLocation"
+    },
+    "sha256": {
+      "$ref": "vocabulary.json#/$defs/sha256"
+    }
+  }
+}

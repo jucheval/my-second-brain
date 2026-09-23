@@ -1,0 +1,19 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "brain-validator"
+version = "0.1.0"
+requires-python = ">=3.11"
+dependencies = [
+    "PyYAML>=6.0",
+    "jsonschema>=4.0",
+    "referencing>=0.30",
+]
+
+[project.scripts]
+brain-validate = "brain_validator.cli:main"
+
+[tool.setuptools.packages.find]
+include = ["brain_validator*"]
