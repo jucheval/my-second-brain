@@ -1,4 +1,4 @@
-# Second brain
+# My second brain
 
 A private, portable knowledge base built from Markdown and Git. Notes can be written and read by humans or AI, while Markdown remains the source of truth. It is based on the [Foam](https://foambubble.github.io/foam/) personal knowledge management system and the [Open Knowledge Format](https://github.com/GoogleCloudPlatform/open-knowledge-format/tree/main) specification. In particular, notes contain metadata as a YAML front matter (metadata contracts are in `schema/` and are used to validate the structure of the notes). Four [Foam templates](https://docs.foam.md/features/templates/) are provided to create new notes (see [[template|this note]]).
 
