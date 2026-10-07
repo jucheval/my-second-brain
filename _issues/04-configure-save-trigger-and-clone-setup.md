@@ -6,7 +6,7 @@
 
 **Status:** ready-for-agent
 
-- [ ] Configure the save-trigger extension to run generation when the vocabulary is saved.
-- [ ] Retain a documented manual fallback if saving an unchanged file does not trigger generation.
-- [ ] Exclude generator sources from Foam without hiding generated templates.
-- [ ] Document installation, generation, validation, optional indexes, and interactive-only link checking.
+- [x] Configure the save-trigger extension to run generation when the vocabulary is saved.
+- [x] Retain a documented manual fallback if saving an unchanged file does not trigger generation.
+- [x] Exclude generator sources from Foam without hiding generated templates.
+- [x] Document installation, generation, validation, optional indexes, and interactive-only link checking.

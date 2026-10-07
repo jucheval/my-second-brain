@@ -12,7 +12,7 @@ The starting procedure follows the [Foam starting procedure](https://github.com/
 > 2. Press "Use this template" button above or [second-brain-template](https://github.com/foambubble/foam-template/generate) to fork it to your own GitHub account. If you want to keep your thoughts to yourself, remember to set the repository private.
 > 3. Clone the repository to your local machine [from GitHub](https://help.github.com/en/github/creating-cloning-and-archiving-repositories/cloning-a-repository) or directly [from VS Code](https://code.visualstudio.com/docs/sourcecontrol/github#_cloning-a-repository) and open it in VS Code.
 >
-> 4. When prompted to install recommended extensions, click **Install all** (or **Show Recommendations** if you want to review and install them one by one)
+> 4. When prompted to install recommended extensions, click **Install all** (or **Show Recommendations** if you want to review and install them one by one). The recommendations include Foam and Run On Save.
 
 After setting up the repository, read the rest of this file.
 
@@ -27,6 +27,7 @@ This repository contains example notes as well as the reusable architecture.
 
 The root folder contains the [`CONTEXT.md` (repository vocabulary)](CONTEXT.md) and [`AGENTS.md` (agent routing and boundaries)](AGENTS.md).
 Folders may contain an `index.md`. Folder terminology belongs in a nearby `CONTEXT.md` when needed. The maximum depth below `knowledge/` and `projects/` is two folder levels.
+The organization workflow expects an `index.md` in each canonical knowledge or project folder. Index files are optional to automated validation, which does not check their presence or contents.
 
 ### `journal/`
 
@@ -48,7 +49,7 @@ Reusable concepts, methods, explanations, and reference material that can inform
 
 ### `projects/`
 
-Work organized around objectives and deliverables. Project notes describe the goal, work, and outcomes of each project. The maximum depth below `projects/` is two folder levels. Each folder must contain an `index.md` that lists the notes in that folder and/or its subfolders. It may also contain a `CONTEXT.md` that defines the vocabulary used in that folder.
+Work organized around objectives and deliverables. Project notes describe the goal, work, and outcomes of each project. The maximum depth below `projects/` is two folder levels. Each project folder's `index.md` lists notes in that folder and/or its subfolders. A folder may also contain a `CONTEXT.md` that defines the vocabulary used there.
 
 ### `assets/`
 
@@ -87,7 +88,13 @@ _config/.venv/bin/python -m pip install -e ./_config
 _config/.venv/bin/brain-generate-foam
 ```
 
-The generation command can be rerun after editing `_config/schema/vocabulary.json`, `_config/foam-templates/`, or `_config/agents-skills/`. It writes the Foam templates, agent skills, and vocabulary snippet used by VS Code. Generated files are ignored by Git.
+The generation command can be rerun after editing `_config/schema/vocabulary.json`, `_config/foam-templates/`, or `_config/agents-skills/`. Saving the vocabulary file runs it automatically when the Run On Save extension detects a change. Run the command manually after setup or whenever a save does not trigger generation:
+
+```text
+brain-generate-foam
+```
+
+It writes the Foam templates, agent skills, and vocabulary snippet used by VS Code. Generated files are ignored by Git. The generator sources under `_config/` are excluded from Foam's note graph; generated templates remain in `.foam/templates/`.
 
 Enable the repository pre-commit hook:
 
@@ -113,4 +120,4 @@ _config/.venv/bin/brain-validate .
 _config/.venv/bin/python -m unittest discover -s _config/tests
 ```
 
-The validator may be run after changing note metadata, links, indexes, schemas, or repository structure. The pre-commit hook runs it automatically once enabled.
+The validator may be run after changing note metadata, schemas, or repository structure. It does not require `index.md` files or validate their contents, and it does not check Foam wikilinks. Review links interactively in Foam; link checking is not part of automated validation. The pre-commit hook runs the validator automatically once enabled.
