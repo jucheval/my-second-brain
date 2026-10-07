@@ -1,7 +1,4 @@
----
-type: context
-title: foam-context
----
+# Foam
 
 This context defines the language used when talking about the Foam VS Code extension.
 

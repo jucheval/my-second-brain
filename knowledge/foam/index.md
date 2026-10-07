@@ -1,9 +1,4 @@
----
-type: index
-title: foam-index
----
-
-Index of Foam notes.
+# Foam
 
 - [[template|Foam templates]]
 - [[paste-images|Paste images into notes]]

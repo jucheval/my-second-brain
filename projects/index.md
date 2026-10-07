@@ -1,8 +1,3 @@
----
-type: index
-title: projects-index
----
-
-Index of all projects.
+# Projects
 
 - [[projects/abc/index|Project ABC]]

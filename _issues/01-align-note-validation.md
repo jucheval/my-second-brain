@@ -4,9 +4,9 @@
 
 **Blocked by:** None (can start immediately)
 
-**Status:** ready-for-agent
+**Status:** complete
 
-- [ ] Keep globally unique note/source IDs, schema validation, folder-depth limits, and warnings for HTTP sources or missing cached files.
-- [ ] Remove index existence/completeness, journal filename/layout, and unresolved-wikilink checks; remove frontmatter requirements for `index.md` and `CONTEXT.md`.
-- [ ] Remove `index` and `context` from the vocabulary's note type enum.
-- [ ] Tests cover retained checks and confirm removed checks no longer reject notes.
+- [x] Keep globally unique note/source IDs, schema validation, folder-depth limits, and warnings for HTTP sources or missing cached files.
+- [x] Remove index existence/completeness, journal filename/layout, and unresolved-wikilink checks; remove frontmatter requirements for `index.md` and `CONTEXT.md`.
+- [x] Remove `index` and `context` from the vocabulary's note type enum.
+- [x] Tests cover retained checks and confirm removed checks no longer reject notes.

@@ -26,7 +26,7 @@ This repository contains example notes as well as the reusable architecture.
 ### `./`
 
 The root folder contains the [`CONTEXT.md` (repository vocabulary)](CONTEXT.md) and [`AGENTS.md` (agent routing and boundaries)](AGENTS.md).
-Canonical folders contain an `index.md`. Folder terminology belongs in a nearby `CONTEXT.md` when needed. The maximum depth below `knowledge/` and `projects/` is two folder levels.
+Folders may contain an `index.md`. Folder terminology belongs in a nearby `CONTEXT.md` when needed. The maximum depth below `knowledge/` and `projects/` is two folder levels.
 
 ### `journal/`
 
@@ -41,7 +41,10 @@ The entry point for draft notes (i.e. new non-journal notes). Drafts may be inco
 
 ### `knowledge/`
 
-Reusable concepts, methods, explanations, and reference material that can inform more than one project. They should rely on sources referenced in the note's metadata (via url or local paths). The maximum depth below `knowledge/` is two folder levels. Each folder must contain an `index.md` that lists the notes in that folder and/or its subfolders. It may also contain a `CONTEXT.md` that defines the vocabulary used in that folder.
+Reusable concepts, methods, explanations, and reference material that can inform more than one project. They should rely on sources referenced in the note's metadata (via url or local paths). The maximum depth below `knowledge/` is two folder levels. Each folder may contain:
+
+- `index.md` that lists the notes in that folder and/or its subfolders,
+- `CONTEXT.md` that defines the vocabulary used in that folder.
 
 ### `projects/`
 
