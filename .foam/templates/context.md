@@ -5,6 +5,7 @@ foam_template:
 ---
 
 ---
+
 type: context
 title: ${1:folder-name}-context
 ---

@@ -61,3 +61,9 @@ Retrieval is complete only when all applicable conditions are satisfied:
 - No note, metadata, index, context file, tracked asset, or Git state was modified.
 
 Report the answer, evidence links, statuses, unresolved conflicts, and search limitations. When evidence is insufficient, say what was searched and what additional decision or source is required instead of filling the gap with an assumption.
+
+## Generated vocabulary
+
+- Types: `concept`, `theorem`, `conjecture`, `counterexample`, `method`, `algorithm`, `model`, `example`, `exercise`, `documentation`, `project`, `decision`, `plan`, `meeting`, `journal`
+- Statuses: `draft`, `stable`, `deprecated`
+- Tags: `stochastic-process`, `coupling`, `julia`, `makie`

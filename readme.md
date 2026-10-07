@@ -76,6 +76,7 @@ Windows PowerShell:
 ```powershell
 py -3.11 -m venv _config/.venv
 _config/.venv\Scripts\python.exe -m pip install -e .\_config
+_config\.venv\Scripts\brain-generate-foam.exe
 ```
 
 macOS or Linux:
@@ -83,7 +84,10 @@ macOS or Linux:
 ```bash
 python3.11 -m venv _config/.venv
 _config/.venv/bin/python -m pip install -e ./_config
+_config/.venv/bin/brain-generate-foam
 ```
+
+The generation command can be rerun after editing `_config/schema/vocabulary.json`, `_config/foam-templates/`, or `_config/agents-skills/`. It writes the Foam templates, agent skills, and vocabulary snippet used by VS Code. Generated files are ignored by Git.
 
 Enable the repository pre-commit hook:
 

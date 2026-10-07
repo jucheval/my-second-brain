@@ -5,7 +5,7 @@ import tempfile
 import unittest
 from pathlib import Path
 
-from brain_validator.cli import main
+from validator.cli import main
 
 REPOSITORY_ROOT = Path(__file__).parents[1]
 

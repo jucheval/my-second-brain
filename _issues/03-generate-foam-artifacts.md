@@ -6,6 +6,6 @@
 
 **Status:** ready-for-agent
 
-- [ ] Generation is deterministic and has a usable manual/bootstrap command.
-- [ ] Generated outputs are ignored without ignoring existing tracked VS Code configuration.
-- [ ] Source files remain available to Foam where intended, and generated templates remain discoverable.
+- [x] Generation is deterministic and has a usable manual/bootstrap command.
+- [x] Generated outputs are ignored without ignoring existing tracked VS Code configuration.
+- [x] Source files remain available to Foam where intended, and generated templates remain discoverable.

@@ -62,4 +62,10 @@ Add `description`, `tags`, `sources`, and `type_candidates` only when supported 
 
 When `brain-validate` is available, the proposal is complete only when the validation passes. When it is unavailable, do not perform or claim the completion checks; report that validation is unavailable and ask the user to perform manual validation.
 
-Report the new file and validation status. Stop before creating or modifying files whenever scope, target, terminology, Git state, or required metadata cannot be resolved without inventing a decision.
+Report the new file and validation status. Stop before creating or modifying files whenever scope, target, terminology, status, or required metadata cannot be resolved without inventing a decision.
+
+## Generated vocabulary
+
+- Types: `concept`, `theorem`, `conjecture`, `counterexample`, `method`, `algorithm`, `model`, `example`, `exercise`, `documentation`, `project`, `decision`, `plan`, `meeting`, `journal`
+- Statuses: `draft`, `stable`, `deprecated`
+- Tags: `stochastic-process`, `coupling`, `julia`, `makie`

@@ -2,6 +2,10 @@
 __pycache__/
 *.egg-info/
 
+.foam/templates/*.md
+.agents/skills/brain-*/SKILL.md
+.vscode/brain-vocabulary.code-snippets
+
 /assets/papers/*
 /assets/books/*
 /assets/webpages/*
