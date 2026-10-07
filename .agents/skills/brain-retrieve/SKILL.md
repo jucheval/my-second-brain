@@ -12,9 +12,9 @@ Answer a user question from the repository's Markdown notes and, when necessary,
 
 Use these repository-root JSON schemas when interpreting front matter:
 
-- `schema/note.schema.json` defines note fields and statuses.
-- `schema/vocabulary.json` defines types, tags, IDs, author identities, and timestamps.
-- `schema/source.schema.json` defines source-entry fields and source locations.
+- `_config/schema/note.schema.json` defines note fields and statuses.
+- `_config/schema/vocabulary.json` defines types, tags, IDs, author identities, and timestamps.
+- `_config/schema/source.schema.json` defines source-entry fields and source locations.
 
 Search `inbox/`, `journal/`, `knowledge/`, and `projects/`, including their `index.md` and `CONTEXT.md` files when relevant. Use Foam wikilinks and repository-relative paths as evidence references.
 
@@ -33,7 +33,7 @@ Display the status of every note used or returned. Apply an explicit status filt
 3. Rank candidate notes by status, direct relevance, and link proximity. Read the strongest candidates and follow relevant wikilinks to stable notes. Read an applicable `CONTEXT.md` before interpreting domain terminology.
 4. Surface terminology conflicts. When the user's wording conflicts with a relevant `CONTEXT.md`, show the repository term and the user's term, then ask the user which meaning to use. Preserve the ambiguity in any interim report.
 5. Compare claims across the selected notes. When notes contradict one another, show the conflicting note paths, statuses, and claims, then ask the user to resolve the conflict. Keep the conflicting claims separate; provide no synthesized conclusion from them.
-6. Inspect source entries only when repository notes do not provide enough evidence or the user asks about the source itself. Validate source metadata against `schema/source.schema.json` before using it.
+6. Inspect source entries only when repository notes do not provide enough evidence or the user asks about the source itself. Validate source metadata against `_config/schema/source.schema.json` before using it.
 7. Use an existing local source file when `location` is present and the file exists. When source knowledge is needed and the file is absent, ask the user for a complete repository-relative `location` before downloading.
 8. Download only public PDF or webpage sources through direct `http` or `https` URLs. Keep the file in the user-provided dedicated source directory under `assets/`. Convert a webpage to Markdown under `assets/webpages/` when Markdown is the useful reading format. Read the local file after downloading it.
 9. If a download fails, report the source and failure and ask the user to download it manually. State clearly which conclusions rely only on repository notes. Never claim to have read an unavailable source.

@@ -43,7 +43,7 @@ def _front_matter(path: Path) -> dict:
 def _note_schema_validator(
     root: Path, allow_extra_properties: bool = False
 ) -> Draft202012Validator:
-    schema_directory = root / "schema"
+    schema_directory = root / "_config" / "schema"
     note_path = schema_directory / "note.schema.json"
     source_path = schema_directory / "source.schema.json"
     vocabulary_path = schema_directory / "vocabulary.json"
@@ -70,7 +70,7 @@ def _note_schema_validator(
 def _contract_errors(root: Path) -> list[str]:
     errors = []
     for filename in CONTRACT_FILES:
-        path = root / "schema" / filename
+        path = root / "_config" / "schema" / filename
         if not path.is_file():
             errors.append(f"missing schema contract: {_display_path(path, root)}")
             continue

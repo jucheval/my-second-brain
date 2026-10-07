@@ -4,8 +4,8 @@
 
 **Blocked by:** 01: Align note validation with the new contract
 
-**Status:** ready-for-agent
+**Status:** complete
 
-- [ ] Preserve the `brain-validate` command and repository-root schema resolution, including in temporary-repository tests.
-- [ ] Update the pre-commit hook to run the retained validator only.
-- [ ] Document the installation workflow for the relocated tooling.
+- [x] Preserve the `brain-validate` command and repository-root schema resolution, including in temporary-repository tests.
+- [x] Update the pre-commit hook to run the retained validator only.
+- [x] Document the installation workflow for the relocated tooling.

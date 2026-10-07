@@ -1,6 +1,6 @@
 # My second brain
 
-A private, portable knowledge base built from Markdown and Git. Notes can be written and read by humans or AI, while Markdown remains the source of truth. It is based on the [Foam](https://foambubble.github.io/foam/) personal knowledge management system and the [Open Knowledge Format](https://github.com/GoogleCloudPlatform/open-knowledge-format/tree/main) specification. In particular, notes contain metadata as a YAML front matter (metadata contracts are in `schema/` and are used to validate the structure of the notes). Four [Foam templates](https://docs.foam.md/features/templates/) are provided to create new notes (see [[template|this note]]).
+A private, portable knowledge base built from Markdown and Git. Notes can be written and read by humans or AI, while Markdown remains the source of truth. It is based on the [Foam](https://foambubble.github.io/foam/) personal knowledge management system and the [Open Knowledge Format](https://github.com/GoogleCloudPlatform/open-knowledge-format/tree/main) specification. In particular, notes contain metadata as a YAML front matter (metadata contracts are in `_config/schema/` and are used to validate the structure of the notes). Four [Foam templates](https://docs.foam.md/features/templates/) are provided to create new notes (see [[template|this note]]).
 
 ## Getting started
 
@@ -21,7 +21,7 @@ After setting up the repository, read the rest of this file.
 This repository contains example notes as well as the reusable architecture.
 
 1. Have a look at the example files in `inbox/`, `journal/`, `knowledge/`, and `projects/` before removing them.
-2. Adapt the types and tags vocabulary in [`schema/vocabulary.json`](schema/vocabulary.json) to your needs. Their respective definitions start at lines 14 (types) and 46 (tags).
+2. Adapt the types and tags vocabulary in [`_config/schema/vocabulary.json`](_config/schema/vocabulary.json) to your needs. Their respective definitions start at lines 14 (types) and 46 (tags).
 
 ### `./`
 
@@ -69,24 +69,20 @@ AI may create drafts and proposals. Humans approve stable knowledge and add veri
 
 ### Prerequisites
 
-- Git
-- Python 3.11 or newer
-- VS Code is recommended. Open the repository and accept the extensions listed in [.vscode/extensions.json](./.vscode/extensions.json).
-
 Clone the repository, then create a virtual environment and install the validator.
 
 Windows PowerShell:
 
 ```powershell
-py -3.11 -m venv .venv
-.\.venv\Scripts\python.exe -m pip install -e .
+py -3.11 -m venv _config/.venv
+_config/.venv\Scripts\python.exe -m pip install -e .\_config
 ```
 
 macOS or Linux:
 
 ```bash
-python3.11 -m venv .venv
-.venv/bin/python -m pip install -e .
+python3.11 -m venv _config/.venv
+_config/.venv/bin/python -m pip install -e ./_config
 ```
 
 Enable the repository pre-commit hook:
@@ -97,18 +93,20 @@ git config core.hooksPath .githooks
 
 ## Validation
 
+Install the validator into your active virtual environment from the repository root with `python -m pip install -e ./_config`.
+
 Windows PowerShell:
 
 ```powershell
-.\.venv\Scripts\brain-validate.exe .
-.\.venv\Scripts\python.exe -m unittest discover -s tests
+_config\.venv\Scripts\brain-validate.exe .
+_config\.venv\Scripts\python.exe -m unittest discover -s _config\tests
 ```
 
 macOS or Linux:
 
 ```bash
-.venv/bin/brain-validate .
-.venv/bin/python -m unittest discover -s tests
+_config/.venv/bin/brain-validate .
+_config/.venv/bin/python -m unittest discover -s _config/tests
 ```
 
 The validator may be run after changing note metadata, links, indexes, schemas, or repository structure. The pre-commit hook runs it automatically once enabled.

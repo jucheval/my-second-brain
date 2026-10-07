@@ -10,12 +10,18 @@ from brain_validator.cli import main
 REPOSITORY_ROOT = Path(__file__).parents[1]
 
 
+def _copy_schema(root: Path) -> None:
+    schema_directory = root / "_config" / "schema"
+    schema_directory.parent.mkdir(parents=True, exist_ok=True)
+    shutil.copytree(REPOSITORY_ROOT / "schema", schema_directory)
+
+
 class ValidatorCliTests(unittest.TestCase):
     def test_accepts_valid_inbox_note(self):
         with tempfile.TemporaryDirectory() as directory:
             root = Path(directory)
             (root / "inbox").mkdir()
-            shutil.copytree(REPOSITORY_ROOT / "schema", root / "schema")
+            _copy_schema(root)
             (root / "inbox" / "first-note.md").write_text(
                 "---\n"
                 "id: first-note\n"
@@ -39,7 +45,7 @@ class ValidatorCliTests(unittest.TestCase):
         with tempfile.TemporaryDirectory() as directory:
             root = Path(directory)
             (root / "inbox").mkdir()
-            shutil.copytree(REPOSITORY_ROOT / "schema", root / "schema")
+            _copy_schema(root)
             (root / "inbox" / "incomplete.md").write_text(
                 "---\n"
                 "id: incomplete-note\n"
@@ -64,7 +70,7 @@ class ValidatorCliTests(unittest.TestCase):
         with tempfile.TemporaryDirectory() as directory:
             root = Path(directory)
             (root / "inbox").mkdir()
-            shutil.copytree(REPOSITORY_ROOT / "schema", root / "schema")
+            _copy_schema(root)
             (root / "inbox" / "unknown-type.md").write_text(
                 "---\n"
                 "id: unknown-type\n"
@@ -90,7 +96,7 @@ class ValidatorCliTests(unittest.TestCase):
         with tempfile.TemporaryDirectory() as directory:
             root = Path(directory)
             (root / "inbox").mkdir()
-            shutil.copytree(REPOSITORY_ROOT / "schema", root / "schema")
+            _copy_schema(root)
             note = (
                 "---\n"
                 "id: duplicate-note\n"
@@ -117,7 +123,7 @@ class ValidatorCliTests(unittest.TestCase):
         with tempfile.TemporaryDirectory() as directory:
             root = Path(directory)
             (root / "inbox").mkdir()
-            shutil.copytree(REPOSITORY_ROOT / "schema", root / "schema")
+            _copy_schema(root)
             (root / "inbox" / "note.md").write_text(
                 "---\n"
                 "id: shared-id\n"
@@ -148,7 +154,7 @@ class ValidatorCliTests(unittest.TestCase):
             root = Path(directory)
             topic = root / "knowledge" / "probability"
             topic.mkdir(parents=True)
-            shutil.copytree(REPOSITORY_ROOT / "schema", root / "schema")
+            _copy_schema(root)
             (root / "knowledge" / "index.md").write_text(
                 "A folder overview without metadata.\n", encoding="utf-8"
             )
@@ -174,7 +180,7 @@ class ValidatorCliTests(unittest.TestCase):
     def test_context_file_needs_no_front_matter(self):
         with tempfile.TemporaryDirectory() as directory:
             root = Path(directory)
-            shutil.copytree(REPOSITORY_ROOT / "schema", root / "schema")
+            _copy_schema(root)
             (root / "CONTEXT.md").write_text(
                 "Repository terminology lives here.\n", encoding="utf-8"
             )
@@ -190,7 +196,7 @@ class ValidatorCliTests(unittest.TestCase):
         with tempfile.TemporaryDirectory() as directory:
             root = Path(directory)
             (root / "knowledge").mkdir()
-            shutil.copytree(REPOSITORY_ROOT / "schema", root / "schema")
+            _copy_schema(root)
             (root / "knowledge" / "index.md").write_text(
                 "---\n" "type: index\n" "title: knowledge-index\n" "---\n",
                 encoding="utf-8",
@@ -221,7 +227,7 @@ class ValidatorCliTests(unittest.TestCase):
             root = Path(directory)
             deep_folder = root / "knowledge" / "a" / "b" / "c"
             deep_folder.mkdir(parents=True)
-            shutil.copytree(REPOSITORY_ROOT / "schema", root / "schema")
+            _copy_schema(root)
             (deep_folder / "too-deep.md").write_text(
                 "---\n"
                 "id: too-deep\n"
@@ -246,7 +252,7 @@ class ValidatorCliTests(unittest.TestCase):
         with tempfile.TemporaryDirectory() as directory:
             root = Path(directory)
             (root / "knowledge").mkdir()
-            shutil.copytree(REPOSITORY_ROOT / "schema", root / "schema")
+            _copy_schema(root)
             (root / "knowledge" / "linked-note.md").write_text(
                 "---\n"
                 "id: linked-note\n"
@@ -272,7 +278,7 @@ class ValidatorCliTests(unittest.TestCase):
         with tempfile.TemporaryDirectory() as directory:
             root = Path(directory)
             (root / "inbox").mkdir()
-            shutil.copytree(REPOSITORY_ROOT / "schema", root / "schema")
+            _copy_schema(root)
             (root / "inbox" / "source-note.md").write_text(
                 "---\n"
                 "id: source-note\n"
@@ -303,7 +309,7 @@ class ValidatorCliTests(unittest.TestCase):
         with tempfile.TemporaryDirectory() as directory:
             root = Path(directory)
             (root / "inbox").mkdir()
-            shutil.copytree(REPOSITORY_ROOT / "schema", root / "schema")
+            _copy_schema(root)
             (root / "inbox" / "http-source.md").write_text(
                 "---\n"
                 "id: http-source\n"
@@ -331,8 +337,8 @@ class ValidatorCliTests(unittest.TestCase):
     def test_rejects_malformed_schema_contract(self):
         with tempfile.TemporaryDirectory() as directory:
             root = Path(directory)
-            shutil.copytree(REPOSITORY_ROOT / "schema", root / "schema")
-            (root / "schema" / "note.schema.json").write_text(
+            _copy_schema(root)
+            (root / "_config" / "schema" / "note.schema.json").write_text(
                 "{ malformed\n",
                 encoding="utf-8",
             )
@@ -342,13 +348,13 @@ class ValidatorCliTests(unittest.TestCase):
                 result = main([str(root)])
 
             self.assertEqual(result, 1)
-            self.assertIn("schema/note.schema.json", output.getvalue())
+            self.assertIn("_config/schema/note.schema.json", output.getvalue())
 
     def test_rejects_index_and_context_note_types(self):
         with tempfile.TemporaryDirectory() as directory:
             root = Path(directory)
             (root / "inbox").mkdir()
-            shutil.copytree(REPOSITORY_ROOT / "schema", root / "schema")
+            _copy_schema(root)
             for note_type in ("index", "context"):
                 (root / "inbox" / f"{note_type}-type.md").write_text(
                     "---\n"
@@ -376,7 +382,7 @@ class ValidatorCliTests(unittest.TestCase):
         with tempfile.TemporaryDirectory() as directory:
             root = Path(directory)
             (root / "inbox").mkdir()
-            shutil.copytree(REPOSITORY_ROOT / "schema", root / "schema")
+            _copy_schema(root)
             (root / "inbox" / "windows-note.md").write_bytes(
                 (
                     "---\n"
@@ -403,7 +409,7 @@ class ValidatorCliTests(unittest.TestCase):
         with tempfile.TemporaryDirectory() as directory:
             root = Path(directory)
             (root / "inbox").mkdir()
-            shutil.copytree(REPOSITORY_ROOT / "schema", root / "schema")
+            _copy_schema(root)
             (root / "inbox" / "capture.md").write_text(
                 "---\n"
                 "id: capture-note\n"
@@ -429,7 +435,7 @@ class ValidatorCliTests(unittest.TestCase):
             root = Path(directory)
             journal = root / "journal" / "2026"
             journal.mkdir(parents=True)
-            shutil.copytree(REPOSITORY_ROOT / "schema", root / "schema")
+            _copy_schema(root)
             (journal / "09-24.md").write_text(
                 "---\n"
                 "id: journal-entry\n"

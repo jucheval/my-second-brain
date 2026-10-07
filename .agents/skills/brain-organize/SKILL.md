@@ -12,9 +12,9 @@ Turn one coherent set of draft notes into a reviewable Git proposal. Preserve th
 
 Use these repository-root JSON schemas as the metadata authority:
 
-- `schema/note.schema.json` defines note field shapes and required keys.
-- `schema/vocabulary.json` defines allowed types, tags, statuses, IDs, author identities, and timestamps.
-- `schema/source.schema.json` defines source-entry keys and constraints.
+- `_config/schema/note.schema.json` defines note field shapes and required keys.
+- `_config/schema/vocabulary.json` defines allowed types, tags, statuses, IDs, author identities, and timestamps.
+- `_config/schema/source.schema.json` defines source-entry keys and constraints.
 
 Read the applicable schemas before editing front matter. Use Foam wikilinks for internal links.
 
