@@ -96,6 +96,49 @@ brain-generate-foam
 
 It writes the Foam templates, agent skills, and vocabulary snippet used by VS Code. Generated files are ignored by Git. The generator sources under `_config/` are excluded from Foam's note graph; generated templates remain in `.foam/templates/`.
 
+### Prompt-driven retrieval
+
+The generated `brain-retrieve` skill searches the current prompt against a Foam MCP server. It is manual-only and uses read tools; Foam MCP is read-only unless `--allow-writes` is explicitly added.
+
+Install the Foam CLI:
+
+```bash
+npm install --global foam-cli
+```
+
+Add a Foam server to the Copilot user MCP configuration at `~/.copilot/mcp-config.json` (or open it with **MCP: Open User Configuration**). Replace the workspace path with the absolute path to this clone:
+
+```json
+{
+  "mcpServers": {
+    "foam": {
+      "command": "foam",
+      "args": ["mcp", "--workspace", "/absolute/path/to/my-second-brain"]
+    }
+  }
+}
+```
+
+Do not add `--allow-writes`. Generate the skill, then copy it into Copilot's personal skill directory.
+
+In VS Code, run **MCP: List Servers**, start `foam`, and review the server configuration before trusting it.
+
+macOS or Linux:
+
+```bash
+mkdir -p ~/.agents/skills/brain-retrieve
+cp .agents/skills/brain-retrieve/SKILL.md ~/.agents/skills/brain-retrieve/SKILL.md
+```
+
+Windows PowerShell:
+
+```powershell
+New-Item -ItemType Directory -Force "$HOME\.agents\skills\brain-retrieve" | Out-Null
+Copy-Item .agents\skills\brain-retrieve\SKILL.md "$HOME\.agents\skills\brain-retrieve\SKILL.md" -Force
+```
+
+Invoke `/brain-retrieve` in Copilot Chat. See [VS Code Agent Skills](https://code.visualstudio.com/docs/copilot/customization/agent-skills) and [Foam MCP](https://foambubble.github.io/foam/user/tools/cli/mcp) for details.
+
 Enable the repository pre-commit hook:
 
 ```text
@@ -121,3 +164,5 @@ _config/.venv/bin/python -m unittest discover -s _config/tests
 ```
 
 The validator may be run after changing note metadata, schemas, or repository structure. It does not require `index.md` files or validate their contents, and it does not check Foam wikilinks. Review links interactively in Foam; link checking is not part of automated validation. The pre-commit hook runs the validator automatically once enabled.
+
+[template|this note]: knowledge/foam/template.md "Foam templates"

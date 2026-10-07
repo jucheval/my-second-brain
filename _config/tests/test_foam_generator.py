@@ -9,9 +9,10 @@ from generator.cli import generate
 class FoamGeneratorTests(unittest.TestCase):
     def test_generation_is_deterministic_and_uses_vocabulary(self):
         with tempfile.TemporaryDirectory() as directory:
-            root = Path(directory)
+            # generate() resolves its root, and /var links to /private/var on macOS.
+            root = Path(directory).resolve()
             templates = root / "_config" / "foam-templates"
-            skills = root / "_config" / "agents-skills" / "brain-capture"
+            skills = root / "_config" / "agents-skills" / "brain-retrieve"
             templates.mkdir(parents=True)
             skills.mkdir(parents=True)
             (root / "_config" / "schema").mkdir(parents=True)
@@ -31,7 +32,14 @@ class FoamGeneratorTests(unittest.TestCase):
                 "type: ${1|{{TYPE_CHOICES}}|}\n", encoding="utf-8"
             )
             (skills / "SKILL.md").write_text(
-                "# Capture\n\nHuman-authored workflow.\n", encoding="utf-8"
+                "---\n"
+                "name: brain-retrieve\n"
+                "description: Retrieve notes with Foam MCP.\n"
+                "disable-model-invocation: true\n"
+                "---\n\n"
+                "# Retrieve\n\n"
+                "Use the current prompt with read-only Foam MCP.\n",
+                encoding="utf-8",
             )
 
             outputs = generate(root)
@@ -44,10 +52,12 @@ class FoamGeneratorTests(unittest.TestCase):
                 encoding="utf-8"
             )
             self.assertIn("${1|concept,method|}", template)
-            skill = (root / ".agents" / "skills" / "brain-capture" / "SKILL.md").read_text(
+            skill = (root / ".agents" / "skills" / "brain-retrieve" / "SKILL.md").read_text(
                 encoding="utf-8"
             )
-            self.assertIn("Human-authored workflow.", skill)
+            self.assertIn("disable-model-invocation: true", skill)
+            self.assertIn("current prompt with read-only Foam MCP", skill)
+            self.assertNotIn("--allow-writes", skill)
             self.assertIn("- Types: `concept`, `method`", skill)
             self.assertIn("- Tags: `julia`", skill)
             snippets = json.loads(

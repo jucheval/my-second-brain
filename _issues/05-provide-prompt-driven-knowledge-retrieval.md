@@ -6,6 +6,6 @@
 
 **Status:** ready-for-agent
 
-- [ ] The generated skill searches based on the current prompt and adds relevant context.
-- [ ] Document how to place the generated retrieval skill in Copilot's user scope and configure the knowledge-base path.
-- [ ] Foam MCP access is read-only; the workflow does not enable writes.
+- [x] The generated skill searches based on the current prompt and adds relevant context.
+- [x] Document how to place the generated retrieval skill in Copilot's user scope and configure the knowledge-base path.
+- [x] Foam MCP access is read-only; the workflow does not enable writes.
