@@ -64,7 +64,7 @@ The workflow may be AI-assisted thanks to 3 agent skills. Here is the intended 4
 3. **Review**. Mandatory human review of the proposal (promotion to `stable` or `deprecated`).
 4. **Retrieve**. Search notes and sources -> [`/brain-retrieve` agent skill](./.agents/skills/brain-retrieve/SKILL.md). The skill preserves provenance, terminology conflicts, and uncertainty.
 
-AI may create drafts and proposals. Humans approve stable knowledge and add verification. Local source files are disposable caches; they are not the canonical knowledge.
+AI may create drafts and organize them. Humans approve stable knowledge and add verification. Local source files are disposable caches.
 
 ## Setup
 
