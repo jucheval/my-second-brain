@@ -88,7 +88,7 @@ _config/.venv/bin/python -m pip install -e ./_config
 _config/.venv/bin/brain-generate-foam
 ```
 
-The generation command can be rerun after editing `_config/schema/vocabulary.json`, `_config/foam-templates/`, or `_config/agents-skills/`. Saving the vocabulary file runs it automatically when the Run On Save extension detects a change. Run the command manually after setup or whenever a save does not trigger generation:
+The generation command can be rerun after editing `_config/schema/vocabulary.json`, `_config/foam-templates/`, or `_config/agents-skills/`. Saving the vocabulary file runs it automatically when the `Run On Save` extension detects a change (the run may fail in which case it is logged in the Output panel). Run the command manually after setup or whenever a save does not trigger generation:
 
 ```text
 brain-generate-foam

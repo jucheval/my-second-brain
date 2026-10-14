@@ -14,20 +14,15 @@
     "commands": [
       {
         "match": "^[A-Za-z]:[\\\\/].*_config[\\\\/]schema[\\\\/]vocabulary\\.json$",
-        "cmd": "\"${workspaceFolder}/_config/.venv/Scripts/brain-generate-foam.exe\""
+        "cmd": "\"${workspaceFolder}/_config/.venv/Scripts/brain-generate-foam.exe\"",
+        "autoShowOutputPanel": "error"
       },
       {
         "match": "^/.*_config/schema/vocabulary\\.json$",
-        "cmd": "\"${workspaceFolder}/_config/.venv/bin/brain-generate-foam\""
+        "cmd": "\"${workspaceFolder}/_config/.venv/bin/brain-generate-foam\"",
+        "autoShowOutputPanel": "error"
       }
     ]
-  },
-  "[markdown]": {
-    "editor.quickSuggestions": {
-      "other": true,
-      "comments": false,
-      "strings": false
-    }
   },
   "files.exclude": {
     "_site/**": true

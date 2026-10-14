@@ -26,8 +26,8 @@ def _vocabulary(root: Path) -> dict[str, list[str]]:
         if not isinstance(enum, list) or any(not isinstance(value, str) for value in enum):
             raise ValueError(f"{path}: $defs.{name}.enum must be a string array")
         values[name] = enum
-    if not values["type"] or not values["status"]:
-        raise ValueError(f"{path}: type and status enums must not be empty")
+        if not values[name]:
+            raise ValueError(f"{path}: {name} enum must not be empty")
     return values
 
 
@@ -88,16 +88,33 @@ def generate(root: Path) -> list[Path]:
 
     # VS Code snippets
     snippet: dict[str, object] = {
-        "Second Brain vocabulary fields": {
-            "scope": "markdown",
-            "prefix": "brain-vocabulary",
-            "body": [
-                f"type: ${{1|{_choices(vocabulary['type'])}|}}",
-                f"status: ${{2|{_choices(vocabulary['status'])}|}}",
-            ]
-            + (["tags:", f"  - ${{3|{_choices(vocabulary['tag'])}|}}"] if vocabulary["tag"] else [])
-            + ["$0"],
-            "description": "Insert fields using the repository vocabulary",
+        "Type metadata": {
+            "scope": "yaml",
+            "prefix": "type",
+            "body": f"type: ${{1|{_choices(vocabulary['type'])}|}}",
+            "description": "Insert a type entry",
+        },
+        "Status metadata": {
+            "scope": "yaml",
+            "prefix": "status",
+            "body": f"status: ${{1|{_choices(vocabulary['status'])}|}}",
+            "description": "Insert a status entry",
+        },
+        "Tags metadata": {
+            "scope": "yaml",
+            "prefix": "tags",
+            "body": 
+                [
+                    "tags:", 
+                    f"  - ${{1|{_choices(vocabulary['tag'])}|}}",
+                ],
+            "description": "Insert first tag entry",
+        },
+        "Tags entry": {
+            "scope": "yaml",
+            "prefix": "tag",
+            "body": f"${{1|{_choices(vocabulary['tag'])}|}}",
+            "description": "Insert additional tag entry",
         }
     }
     snippet_path = root / ".vscode" / "brain-vocabulary.code-snippets"
