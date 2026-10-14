@@ -13,7 +13,8 @@ dependencies = [
 ]
 
 [project.scripts]
-brain-validate = "brain_validator.cli:main"
+brain-validate = "validator.cli:main"
+brain-generate-foam = "generator.cli:main"
 
 [tool.setuptools.packages.find]
-include = ["brain_validator*"]
+include = ["validator*", "generator*"]

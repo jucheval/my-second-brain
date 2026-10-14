@@ -5,6 +5,7 @@ foam_template:
 ---
 
 ---
+
 type: index
 title: ${1:folder-name}-index
 ---

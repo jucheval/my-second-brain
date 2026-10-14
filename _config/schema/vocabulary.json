@@ -26,9 +26,7 @@
         "decision",
         "plan",
         "meeting",
-        "journal",
-        "index",
-        "context"
+        "journal"
       ],
       "description": "The primary content type of a note."
     },

@@ -5,9 +5,15 @@ import tempfile
 import unittest
 from pathlib import Path
 
-from brain_validator.cli import main
+from validator.cli import main
 
 REPOSITORY_ROOT = Path(__file__).parents[1]
+
+
+def _copy_schema(root: Path) -> None:
+    schema_directory = root / "_config" / "schema"
+    schema_directory.parent.mkdir(parents=True, exist_ok=True)
+    shutil.copytree(REPOSITORY_ROOT / "schema", schema_directory)
 
 
 class ValidatorCliTests(unittest.TestCase):
@@ -15,7 +21,7 @@ class ValidatorCliTests(unittest.TestCase):
         with tempfile.TemporaryDirectory() as directory:
             root = Path(directory)
             (root / "inbox").mkdir()
-            shutil.copytree(REPOSITORY_ROOT / "schema", root / "schema")
+            _copy_schema(root)
             (root / "inbox" / "first-note.md").write_text(
                 "---\n"
                 "id: first-note\n"
@@ -39,7 +45,7 @@ class ValidatorCliTests(unittest.TestCase):
         with tempfile.TemporaryDirectory() as directory:
             root = Path(directory)
             (root / "inbox").mkdir()
-            shutil.copytree(REPOSITORY_ROOT / "schema", root / "schema")
+            _copy_schema(root)
             (root / "inbox" / "incomplete.md").write_text(
                 "---\n"
                 "id: incomplete-note\n"
@@ -64,7 +70,7 @@ class ValidatorCliTests(unittest.TestCase):
         with tempfile.TemporaryDirectory() as directory:
             root = Path(directory)
             (root / "inbox").mkdir()
-            shutil.copytree(REPOSITORY_ROOT / "schema", root / "schema")
+            _copy_schema(root)
             (root / "inbox" / "unknown-type.md").write_text(
                 "---\n"
                 "id: unknown-type\n"
@@ -90,7 +96,7 @@ class ValidatorCliTests(unittest.TestCase):
         with tempfile.TemporaryDirectory() as directory:
             root = Path(directory)
             (root / "inbox").mkdir()
-            shutil.copytree(REPOSITORY_ROOT / "schema", root / "schema")
+            _copy_schema(root)
             note = (
                 "---\n"
                 "id: duplicate-note\n"
@@ -113,28 +119,44 @@ class ValidatorCliTests(unittest.TestCase):
             self.assertIn("duplicate-note", output.getvalue())
             self.assertIn("duplicate", output.getvalue())
 
-    def test_requires_knowledge_root_index(self):
+    def test_rejects_source_id_matching_note_id(self):
         with tempfile.TemporaryDirectory() as directory:
             root = Path(directory)
-            (root / "knowledge").mkdir()
-            shutil.copytree(REPOSITORY_ROOT / "schema", root / "schema")
+            (root / "inbox").mkdir()
+            _copy_schema(root)
+            (root / "inbox" / "note.md").write_text(
+                "---\n"
+                "id: shared-id\n"
+                "type: concept\n"
+                "title: Note\n"
+                "sources:\n"
+                "  - id: shared-id\n"
+                "    title: Source\n"
+                "    url: https://example.org/source\n"
+                "generated:\n"
+                "  - by: ai:test@1\n"
+                "    at: 2026-09-24T12:00:00Z\n"
+                "status: draft\n"
+                "---\n",
+                encoding="utf-8",
+            )
 
             output = io.StringIO()
             with contextlib.redirect_stderr(output):
                 result = main([str(root)])
 
             self.assertEqual(result, 1)
-            self.assertIn("knowledge/index.md", output.getvalue())
+            self.assertIn("duplicate id 'shared-id'", output.getvalue())
+            self.assertIn("sources[0]", output.getvalue())
 
-    def test_requires_index_in_canonical_folder(self):
+    def test_indexes_are_optional_and_need_no_front_matter(self):
         with tempfile.TemporaryDirectory() as directory:
             root = Path(directory)
             topic = root / "knowledge" / "probability"
             topic.mkdir(parents=True)
-            shutil.copytree(REPOSITORY_ROOT / "schema", root / "schema")
+            _copy_schema(root)
             (root / "knowledge" / "index.md").write_text(
-                "---\n" "type: index\n" "title: knowledge-index\n" "---\n",
-                encoding="utf-8",
+                "A folder overview without metadata.\n", encoding="utf-8"
             )
             (topic / "conditional-probability.md").write_text(
                 "---\n"
@@ -153,14 +175,28 @@ class ValidatorCliTests(unittest.TestCase):
             with contextlib.redirect_stderr(output):
                 result = main([str(root)])
 
-            self.assertEqual(result, 1)
-            self.assertIn("knowledge/probability/index.md", output.getvalue())
+            self.assertEqual(result, 0)
+
+    def test_context_file_needs_no_front_matter(self):
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            _copy_schema(root)
+            (root / "CONTEXT.md").write_text(
+                "Repository terminology lives here.\n", encoding="utf-8"
+            )
+
+            output = io.StringIO()
+            with contextlib.redirect_stderr(output):
+                result = main([str(root)])
+
+            self.assertEqual(result, 0)
+            self.assertEqual(output.getvalue(), "")
 
     def test_validates_canonical_note_metadata(self):
         with tempfile.TemporaryDirectory() as directory:
             root = Path(directory)
             (root / "knowledge").mkdir()
-            shutil.copytree(REPOSITORY_ROOT / "schema", root / "schema")
+            _copy_schema(root)
             (root / "knowledge" / "index.md").write_text(
                 "---\n" "type: index\n" "title: knowledge-index\n" "---\n",
                 encoding="utf-8",
@@ -191,17 +227,7 @@ class ValidatorCliTests(unittest.TestCase):
             root = Path(directory)
             deep_folder = root / "knowledge" / "a" / "b" / "c"
             deep_folder.mkdir(parents=True)
-            shutil.copytree(REPOSITORY_ROOT / "schema", root / "schema")
-            for folder in (
-                root / "knowledge",
-                root / "knowledge" / "a",
-                root / "knowledge" / "a" / "b",
-                deep_folder,
-            ):
-                (folder / "index.md").write_text(
-                    "---\n" "type: index\n" f"title: {folder.name}-index\n" "---\n",
-                    encoding="utf-8",
-                )
+            _copy_schema(root)
             (deep_folder / "too-deep.md").write_text(
                 "---\n"
                 "id: too-deep\n"
@@ -222,15 +248,11 @@ class ValidatorCliTests(unittest.TestCase):
             self.assertEqual(result, 1)
             self.assertIn("maximum folder depth", output.getvalue())
 
-    def test_rejects_unresolved_wikilink_in_canonical_note(self):
+    def test_does_not_check_unresolved_wikilinks(self):
         with tempfile.TemporaryDirectory() as directory:
             root = Path(directory)
             (root / "knowledge").mkdir()
-            shutil.copytree(REPOSITORY_ROOT / "schema", root / "schema")
-            (root / "knowledge" / "index.md").write_text(
-                "---\n" "type: index\n" "title: knowledge-index\n" "---\n",
-                encoding="utf-8",
-            )
+            _copy_schema(root)
             (root / "knowledge" / "linked-note.md").write_text(
                 "---\n"
                 "id: linked-note\n"
@@ -249,78 +271,14 @@ class ValidatorCliTests(unittest.TestCase):
             with contextlib.redirect_stderr(output):
                 result = main([str(root)])
 
-            self.assertEqual(result, 1)
-            self.assertIn("missing-note", output.getvalue())
-            self.assertIn("unresolved wikilink", output.getvalue())
-
-    def test_accepts_foam_wikilink_aliases(self):
-        with tempfile.TemporaryDirectory() as directory:
-            root = Path(directory)
-            (root / "knowledge" / "foam").mkdir(parents=True)
-            (root / "projects" / "abc").mkdir(parents=True)
-            shutil.copytree(REPOSITORY_ROOT / "schema", root / "schema")
-            (root / "knowledge" / "index.md").write_text(
-                "---\n" "type: index\n" "title: knowledge-index\n" "---\n",
-                encoding="utf-8",
-            )
-            (root / "knowledge" / "foam" / "index.md").write_text(
-                "---\n"
-                "type: index\n"
-                "title: foam-index\n"
-                "---\n\n"
-                "- [[template]]\n",
-                encoding="utf-8",
-            )
-            (root / "knowledge" / "foam" / "template.md").write_text(
-                "---\n"
-                "id: foam-template\n"
-                "type: concept\n"
-                "title: Foam template\n"
-                "generated:\n"
-                "  - by: ai:test@1\n"
-                "    at: 2026-09-24T12:00:00Z\n"
-                "status: draft\n"
-                "---\n",
-                encoding="utf-8",
-            )
-            (root / "projects" / "index.md").write_text(
-                "---\n" "type: index\n" "title: projects-index\n" "---\n",
-                encoding="utf-8",
-            )
-            (root / "projects" / "abc" / "index.md").write_text(
-                "---\n"
-                "type: index\n"
-                "title: abc-index\n"
-                "---\n\n"
-                "- [[projects/abc/example]]\n",
-                encoding="utf-8",
-            )
-            (root / "projects" / "abc" / "example.md").write_text(
-                "---\n"
-                "id: abc-example\n"
-                "type: example\n"
-                "title: ABC example\n"
-                "generated:\n"
-                "  - by: ai:test@1\n"
-                "    at: 2026-09-24T12:00:00Z\n"
-                "status: draft\n"
-                "---\n\n"
-                "Project: [[abc/index]]\n",
-                encoding="utf-8",
-            )
-
-            output = io.StringIO()
-            with contextlib.redirect_stderr(output):
-                result = main([str(root)])
-
             self.assertEqual(result, 0)
-            self.assertNotIn("unresolved wikilink", output.getvalue())
+            self.assertEqual(output.getvalue(), "")
 
     def test_warns_when_optional_local_source_is_missing(self):
         with tempfile.TemporaryDirectory() as directory:
             root = Path(directory)
             (root / "inbox").mkdir()
-            shutil.copytree(REPOSITORY_ROOT / "schema", root / "schema")
+            _copy_schema(root)
             (root / "inbox" / "source-note.md").write_text(
                 "---\n"
                 "id: source-note\n"
@@ -351,7 +309,7 @@ class ValidatorCliTests(unittest.TestCase):
         with tempfile.TemporaryDirectory() as directory:
             root = Path(directory)
             (root / "inbox").mkdir()
-            shutil.copytree(REPOSITORY_ROOT / "schema", root / "schema")
+            _copy_schema(root)
             (root / "inbox" / "http-source.md").write_text(
                 "---\n"
                 "id: http-source\n"
@@ -379,8 +337,8 @@ class ValidatorCliTests(unittest.TestCase):
     def test_rejects_malformed_schema_contract(self):
         with tempfile.TemporaryDirectory() as directory:
             root = Path(directory)
-            shutil.copytree(REPOSITORY_ROOT / "schema", root / "schema")
-            (root / "schema" / "note.schema.json").write_text(
+            _copy_schema(root)
+            (root / "_config" / "schema" / "note.schema.json").write_text(
                 "{ malformed\n",
                 encoding="utf-8",
             )
@@ -390,64 +348,41 @@ class ValidatorCliTests(unittest.TestCase):
                 result = main([str(root)])
 
             self.assertEqual(result, 1)
-            self.assertIn("schema/note.schema.json", output.getvalue())
+            self.assertIn("_config/schema/note.schema.json", output.getvalue())
 
-    def test_requires_root_context_title(self):
+    def test_rejects_index_and_context_note_types(self):
         with tempfile.TemporaryDirectory() as directory:
             root = Path(directory)
-            shutil.copytree(REPOSITORY_ROOT / "schema", root / "schema")
-            (root / "CONTEXT.md").write_text(
-                "---\n" "type: context\n" "title: wrong-title\n" "---\n",
-                encoding="utf-8",
-            )
+            (root / "inbox").mkdir()
+            _copy_schema(root)
+            for note_type in ("index", "context"):
+                (root / "inbox" / f"{note_type}-type.md").write_text(
+                    "---\n"
+                    f"id: {note_type}-note\n"
+                    f"type: {note_type}\n"
+                    f"title: {note_type.title()}\n"
+                    "generated:\n"
+                    "  - by: ai:test@1\n"
+                    "    at: 2026-09-24T12:00:00Z\n"
+                    "status: draft\n"
+                    "---\n",
+                    encoding="utf-8",
+                )
 
             output = io.StringIO()
             with contextlib.redirect_stderr(output):
                 result = main([str(root)])
 
             self.assertEqual(result, 1)
-            self.assertIn("root-context", output.getvalue())
-
-    def test_requires_folder_index_links(self):
-        with tempfile.TemporaryDirectory() as directory:
-            root = Path(directory)
-            knowledge = root / "knowledge"
-            knowledge.mkdir()
-            shutil.copytree(REPOSITORY_ROOT / "schema", root / "schema")
-            (knowledge / "index.md").write_text(
-                "---\n"
-                "type: index\n"
-                "title: knowledge-index\n"
-                "---\n\n"
-                "A summary without the note link.\n",
-                encoding="utf-8",
-            )
-            (knowledge / "note.md").write_text(
-                "---\n"
-                "id: note-id\n"
-                "type: concept\n"
-                "title: Note\n"
-                "generated:\n"
-                "  - by: ai:test@1\n"
-                "    at: 2026-09-24T12:00:00Z\n"
-                "status: draft\n"
-                "---\n",
-                encoding="utf-8",
-            )
-
-            output = io.StringIO()
-            with contextlib.redirect_stderr(output):
-                result = main([str(root)])
-
-            self.assertEqual(result, 1)
-            self.assertIn("index.md", output.getvalue())
-            self.assertIn("missing link", output.getvalue())
+            self.assertIn("type", output.getvalue())
+            self.assertIn("'index' is not one of", output.getvalue())
+            self.assertIn("'context' is not one of", output.getvalue())
 
     def test_accepts_crlf_front_matter(self):
         with tempfile.TemporaryDirectory() as directory:
             root = Path(directory)
             (root / "inbox").mkdir()
-            shutil.copytree(REPOSITORY_ROOT / "schema", root / "schema")
+            _copy_schema(root)
             (root / "inbox" / "windows-note.md").write_bytes(
                 (
                     "---\n"
@@ -474,7 +409,7 @@ class ValidatorCliTests(unittest.TestCase):
         with tempfile.TemporaryDirectory() as directory:
             root = Path(directory)
             (root / "inbox").mkdir()
-            shutil.copytree(REPOSITORY_ROOT / "schema", root / "schema")
+            _copy_schema(root)
             (root / "inbox" / "capture.md").write_text(
                 "---\n"
                 "id: capture-note\n"
@@ -495,12 +430,12 @@ class ValidatorCliTests(unittest.TestCase):
 
             self.assertEqual(result, 0)
 
-    def test_rejects_nested_journal_note(self):
+    def test_accepts_nested_journal_note_with_non_date_filename(self):
         with tempfile.TemporaryDirectory() as directory:
             root = Path(directory)
             journal = root / "journal" / "2026"
             journal.mkdir(parents=True)
-            shutil.copytree(REPOSITORY_ROOT / "schema", root / "schema")
+            _copy_schema(root)
             (journal / "09-24.md").write_text(
                 "---\n"
                 "id: journal-entry\n"
@@ -518,8 +453,8 @@ class ValidatorCliTests(unittest.TestCase):
             with contextlib.redirect_stderr(output):
                 result = main([str(root)])
 
-            self.assertEqual(result, 1)
-            self.assertIn("journal notes must be flat", output.getvalue())
+            self.assertEqual(result, 0)
+            self.assertEqual(output.getvalue(), "")
 
 
 if __name__ == "__main__":

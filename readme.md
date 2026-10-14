@@ -1,6 +1,6 @@
 # My second brain
 
-A private, portable knowledge base built from Markdown and Git. Notes can be written and read by humans or AI, while Markdown remains the source of truth. It is based on the [Foam](https://foambubble.github.io/foam/) personal knowledge management system and the [Open Knowledge Format](https://github.com/GoogleCloudPlatform/open-knowledge-format/tree/main) specification. In particular, notes contain metadata as a YAML front matter (metadata contracts are in `schema/` and are used to validate the structure of the notes). Four [Foam templates](https://docs.foam.md/features/templates/) are provided to create new notes (see [[template|this note]]).
+A private, portable knowledge base built from Markdown and Git. Notes can be written and read by humans or AI, while Markdown remains the source of truth. It is based on the [Foam](https://foambubble.github.io/foam/) personal knowledge management system and the [Open Knowledge Format](https://github.com/GoogleCloudPlatform/open-knowledge-format/tree/main) specification. In particular, notes contain metadata as a YAML front matter (metadata contracts are in `_config/schema/` and are used to validate the structure of the notes). Four [Foam templates](https://docs.foam.md/features/templates/) are provided to create new notes (see [[template|this note]]).
 
 ## Getting started
 
@@ -12,7 +12,7 @@ The starting procedure follows the [Foam starting procedure](https://github.com/
 > 2. Press "Use this template" button above or [second-brain-template](https://github.com/foambubble/foam-template/generate) to fork it to your own GitHub account. If you want to keep your thoughts to yourself, remember to set the repository private.
 > 3. Clone the repository to your local machine [from GitHub](https://help.github.com/en/github/creating-cloning-and-archiving-repositories/cloning-a-repository) or directly [from VS Code](https://code.visualstudio.com/docs/sourcecontrol/github#_cloning-a-repository) and open it in VS Code.
 >
-> 4. When prompted to install recommended extensions, click **Install all** (or **Show Recommendations** if you want to review and install them one by one)
+> 4. When prompted to install recommended extensions, click **Install all** (or **Show Recommendations** if you want to review and install them one by one). The recommendations include Foam and Run On Save.
 
 After setting up the repository, read the rest of this file.
 
@@ -21,12 +21,13 @@ After setting up the repository, read the rest of this file.
 This repository contains example notes as well as the reusable architecture.
 
 1. Have a look at the example files in `inbox/`, `journal/`, `knowledge/`, and `projects/` before removing them.
-2. Adapt the types and tags vocabulary in [`schema/vocabulary.json`](schema/vocabulary.json) to your needs. Their respective definitions start at lines 14 (types) and 46 (tags).
+2. Adapt the types and tags vocabulary in [`_config/schema/vocabulary.json`](_config/schema/vocabulary.json) to your needs. Their respective definitions start at lines 14 (types) and 46 (tags).
 
 ### `./`
 
 The root folder contains the [`CONTEXT.md` (repository vocabulary)](CONTEXT.md) and [`AGENTS.md` (agent routing and boundaries)](AGENTS.md).
-Canonical folders contain an `index.md`. Folder terminology belongs in a nearby `CONTEXT.md` when needed. The maximum depth below `knowledge/` and `projects/` is two folder levels.
+Folders may contain an `index.md`. Folder terminology belongs in a nearby `CONTEXT.md` when needed. The maximum depth below `knowledge/` and `projects/` is two folder levels.
+The organization workflow expects an `index.md` in each canonical knowledge or project folder. Index files are optional to automated validation, which does not check their presence or contents.
 
 ### `journal/`
 
@@ -41,11 +42,14 @@ The entry point for draft notes (i.e. new non-journal notes). Drafts may be inco
 
 ### `knowledge/`
 
-Reusable concepts, methods, explanations, and reference material that can inform more than one project. They should rely on sources referenced in the note's metadata (via url or local paths). The maximum depth below `knowledge/` is two folder levels. Each folder must contain an `index.md` that lists the notes in that folder and/or its subfolders. It may also contain a `CONTEXT.md` that defines the vocabulary used in that folder.
+Reusable concepts, methods, explanations, and reference material that can inform more than one project. They should rely on sources referenced in the note's metadata (via url or local paths). The maximum depth below `knowledge/` is two folder levels. Each folder may contain:
+
+- `index.md` that lists the notes in that folder and/or its subfolders,
+- `CONTEXT.md` that defines the vocabulary used in that folder.
 
 ### `projects/`
 
-Work organized around objectives and deliverables. Project notes describe the goal, work, and outcomes of each project. The maximum depth below `projects/` is two folder levels. Each folder must contain an `index.md` that lists the notes in that folder and/or its subfolders. It may also contain a `CONTEXT.md` that defines the vocabulary used in that folder.
+Work organized around objectives and deliverables. Project notes describe the goal, work, and outcomes of each project. The maximum depth below `projects/` is two folder levels. Each project folder's `index.md` lists notes in that folder and/or its subfolders. A folder may also contain a `CONTEXT.md` that defines the vocabulary used there.
 
 ### `assets/`
 
@@ -60,31 +64,80 @@ The workflow may be AI-assisted thanks to 3 agent skills. Here is the intended 4
 3. **Review**. Mandatory human review of the proposal (promotion to `stable` or `deprecated`).
 4. **Retrieve**. Search notes and sources -> [`/brain-retrieve` agent skill](./.agents/skills/brain-retrieve/SKILL.md). The skill preserves provenance, terminology conflicts, and uncertainty.
 
-AI may create drafts and proposals. Humans approve stable knowledge and add verification. Local source files are disposable caches; they are not the canonical knowledge.
+AI may create drafts and organize them. Humans approve stable knowledge and add verification. Local source files are disposable caches.
 
 ## Setup
 
 ### Prerequisites
-
-- Git
-- Python 3.11 or newer
-- VS Code is recommended. Open the repository and accept the extensions listed in [.vscode/extensions.json](./.vscode/extensions.json).
 
 Clone the repository, then create a virtual environment and install the validator.
 
 Windows PowerShell:
 
 ```powershell
-py -3.11 -m venv .venv
-.\.venv\Scripts\python.exe -m pip install -e .
+py -3.11 -m venv _config/.venv
+_config/.venv\Scripts\python.exe -m pip install -e .\_config
+_config\.venv\Scripts\brain-generate-foam.exe
 ```
 
 macOS or Linux:
 
 ```bash
-python3.11 -m venv .venv
-.venv/bin/python -m pip install -e .
+python3.11 -m venv _config/.venv
+_config/.venv/bin/python -m pip install -e ./_config
+_config/.venv/bin/brain-generate-foam
 ```
+
+The generation command can be rerun after editing `_config/schema/vocabulary.json`, `_config/foam-templates/`, or `_config/agents-skills/`. Saving the vocabulary file runs it automatically when the `Run On Save` extension detects a change (the run may fail in which case it is logged in the Output panel). Run the command manually after setup or whenever a save does not trigger generation:
+
+```text
+brain-generate-foam
+```
+
+It writes the Foam templates, and vocabulary snippets used by VS Code. Generated files are ignored by Git. The generator sources under `_config/` are excluded from Foam's note graph; generated templates remain in `.foam/templates/`.
+
+### Prompt-driven retrieval
+
+The generated `brain-retrieve` skill searches the current prompt against a Foam MCP server. It is manual-only and uses read tools; Foam MCP is read-only unless `--allow-writes` is explicitly added.
+
+Install the Foam CLI:
+
+```bash
+npm install --global foam-cli
+```
+
+Add a Foam server to the Copilot user MCP configuration at `~/.copilot/mcp-config.json` (or open it with **MCP: Open User Configuration**). Replace the workspace path with the absolute path to this clone:
+
+```json
+{
+  "mcpServers": {
+    "foam": {
+      "command": "foam",
+      "args": ["mcp", "--workspace", "/absolute/path/to/my-second-brain"]
+    }
+  }
+}
+```
+
+Do not add `--allow-writes`. Generate the skill, then copy it into Copilot's personal skill directory.
+
+In VS Code, run **MCP: List Servers**, start `foam`, and review the server configuration before trusting it.
+
+macOS or Linux:
+
+```bash
+mkdir -p ~/.agents/skills/brain-retrieve
+cp .agents/skills/brain-retrieve/SKILL.md ~/.agents/skills/brain-retrieve/SKILL.md
+```
+
+Windows PowerShell:
+
+```powershell
+New-Item -ItemType Directory -Force "$HOME\.agents\skills\brain-retrieve" | Out-Null
+Copy-Item .agents\skills\brain-retrieve\SKILL.md "$HOME\.agents\skills\brain-retrieve\SKILL.md" -Force
+```
+
+Invoke `/brain-retrieve` in Copilot Chat. See [VS Code Agent Skills](https://code.visualstudio.com/docs/copilot/customization/agent-skills) and [Foam MCP](https://foambubble.github.io/foam/user/tools/cli/mcp) for details.
 
 Enable the repository pre-commit hook:
 
@@ -94,18 +147,22 @@ git config core.hooksPath .githooks
 
 ## Validation
 
+Install the validator into your active virtual environment from the repository root with `python -m pip install -e ./_config`.
+
 Windows PowerShell:
 
 ```powershell
-.\.venv\Scripts\brain-validate.exe .
-.\.venv\Scripts\python.exe -m unittest discover -s tests
+_config\.venv\Scripts\brain-validate.exe .
+_config\.venv\Scripts\python.exe -m unittest discover -s _config\tests
 ```
 
 macOS or Linux:
 
 ```bash
-.venv/bin/brain-validate .
-.venv/bin/python -m unittest discover -s tests
+_config/.venv/bin/brain-validate .
+_config/.venv/bin/python -m unittest discover -s _config/tests
 ```
 
-The validator may be run after changing note metadata, links, indexes, schemas, or repository structure. The pre-commit hook runs it automatically once enabled.
+The validator may be run after changing note metadata, schemas, or repository structure. It does not require `index.md` files or validate their contents, and it does not check Foam wikilinks. Review links interactively in Foam; link checking is not part of automated validation. The pre-commit hook runs the validator automatically once enabled.
+
+[template|this note]: knowledge/foam/template.md "Foam templates"

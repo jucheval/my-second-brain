@@ -1,8 +1,3 @@
----
-type: index
-title: abc-index
----
-
-Index of all notes related to project ABC.
+# Project ABC
 
 - [[projects/abc/example-meeting|Example Meeting]]

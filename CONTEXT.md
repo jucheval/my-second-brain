@@ -22,10 +22,10 @@ Work organized around an objective, deliverables, and a lifecycle. Project notes
 A dated record of events, observations, decisions, or reflections. It is chronological by nature rather than reusable reference knowledge.
 
 **Inbox note**:
-A captured note that has not yet been placed in its lasting knowledge or project context. It may be incomplete, ambiguous, or contain unresolved links.
+A captured note that has not yet been placed in its lasting knowledge or project folder. It may be incomplete, ambiguous, or contain unresolved links.
 
 **Canonical note**:
-A note placed in its lasting knowledge, project, or journal context. Canonical describes the note's location and role, not whether the note is stable or correct.
+A note placed in its lasting knowledge or project folder. Canonical describes the note's location and role, not whether the note is stable or correct.
 
 ## Lifecycle
 
