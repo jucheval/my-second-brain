@@ -94,7 +94,7 @@ The generation command can be rerun after editing `_config/schema/vocabulary.jso
 brain-generate-foam
 ```
 
-It writes the Foam templates, agent skills, and vocabulary snippet used by VS Code. Generated files are ignored by Git. The generator sources under `_config/` are excluded from Foam's note graph; generated templates remain in `.foam/templates/`.
+It writes the Foam templates, and vocabulary snippets used by VS Code. Generated files are ignored by Git. The generator sources under `_config/` are excluded from Foam's note graph; generated templates remain in `.foam/templates/`.
 
 ### Prompt-driven retrieval
 

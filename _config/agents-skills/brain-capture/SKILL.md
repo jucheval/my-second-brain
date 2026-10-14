@@ -5,6 +5,8 @@ argument-hint: What idea or source reference should be captured?
 disable-model-invocation: true
 ---
 
+<!-- LEGACY -->
+
 # Capture
 
 Create one draft in `inbox/` from the user's supplied material. Preserve the user's meaning.

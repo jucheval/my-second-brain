@@ -5,6 +5,8 @@ argument-hint: Which draft notes should be organized?
 disable-model-invocation: true
 ---
 
+<!-- LEGACY -->
+
 # Organize
 
 Organize selected draft notes into `knowledge/` or `projects/`. Preserve the notes' meaning, keep stable knowledge intact, and leave promotion and verification to the human reviewer.

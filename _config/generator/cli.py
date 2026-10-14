@@ -55,12 +55,14 @@ def _write_if_changed(path: Path, content: str) -> bool:
 
 
 def generate(root: Path) -> list[Path]:
+    # Generate files using the repository vocabulary
     root = root.resolve()
     template_sources_dir = root / "_config" / "foam-templates"
     skill_sources_dir = root / "_config" / "agents-skills"
     vocabulary = _vocabulary(root)
     generated: list[Path] = []
 
+    # Foam templates
     template_sources = sorted(template_sources_dir.glob("*.md"))
     if not template_sources:
         raise ValueError(f"no template sources found in {template_sources_dir}")
@@ -72,17 +74,19 @@ def generate(root: Path) -> list[Path]:
         _write_if_changed(output, content)
         generated.append(output)
 
-    skill_sources = sorted(skill_sources_dir.glob("*/SKILL.md"))
-    if not skill_sources:
-        raise ValueError(f"no skill sources found in {skill_sources_dir}")
-    section = _vocabulary_section(vocabulary)
-    for source in skill_sources:
-        content = source.read_text(encoding="utf-8").rstrip()
-        content = f"{content}\n\n{section}\n"
-        output = root / ".agents" / "skills" / source.parent.name / "SKILL.md"
-        _write_if_changed(output, content)
-        generated.append(output)
+    # Skills
+    # skill_sources = sorted(skill_sources_dir.glob("*/SKILL.md"))
+    # if not skill_sources:
+    #     raise ValueError(f"no skill sources found in {skill_sources_dir}")
+    # section = _vocabulary_section(vocabulary)
+    # for source in skill_sources:
+    #     content = source.read_text(encoding="utf-8").rstrip()
+    #     content = f"{content}\n\n{section}\n"
+    #     output = root / ".agents" / "skills" / source.parent.name / "SKILL.md"
+    #     _write_if_changed(output, content)
+    #     generated.append(output)
 
+    # VS Code snippets
     snippet: dict[str, object] = {
         "Second Brain vocabulary fields": {
             "scope": "markdown",

@@ -4,6 +4,8 @@ description: Use when the user invokes /brain-retrieve or asks to search, compar
 disable-model-invocation: true
 ---
 
+<!-- LEGACY -->
+
 # Retrieve
 
 Answer the user's current question using relevant notes from the configured Foam knowledge base. This skill is user-invoked only; do not preload it for unrelated prompts or delegate the retrieval to a per-session agent.
